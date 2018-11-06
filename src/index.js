@@ -9,10 +9,10 @@ import axios from 'axios';
 export default async function enableCircleCI(answers = {}, type = 'follow') {
   const api = 'https://circleci.com/api/v1.1/';
   const token =
-    proc.env.CIRCLECI_TOKEN ||
     answers.circleci_token ||
     (answers.author && answers.author.circleci_token) ||
-    answers.token;
+    answers.token ||
+    (!proc.env.ASIA_CLI && proc.env.CIRCLECI_TOKEN);
 
   if (!token) {
     throw new Error('@tunnckocore/circleci: expect a CircleCI token');
@@ -26,6 +26,5 @@ export default async function enableCircleCI(answers = {}, type = 'follow') {
   }
 
   url = `${api}${url.join('/')}?circle-token=${token}`;
-
   return axios.post(url);
 }
